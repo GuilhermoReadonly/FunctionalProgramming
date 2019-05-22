@@ -22,6 +22,12 @@ sealed trait Stream[+A]{
     case (m, Cons(_,t)) => t().drop(m - 1)
   }
 
+  //Ex 5.3
+  def takeWhile(p: A => Boolean): Stream[A] = this match{
+    case Empty => Empty
+    case Cons(h,t) => if (p(h())) cons(h(), t().takeWhile(p)) else Empty
+  }
+
 }
 case object Empty extends Stream[Nothing]
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A]
@@ -46,5 +52,6 @@ object StrictnessAndLaziness  {
     println("cons(4,cons(5,cons(6, empty))).drop(2).toList ", cons(4,cons(5,cons(6, empty))).drop(2).toList )
     println("cons(4,cons(5,cons(6, empty))).drop(20).toList ", cons(4,cons(5,cons(6, empty))).drop(20).toList )
     println("cons(4,cons(5,cons(6, empty))).drop(0).toList ", cons(4,cons(5,cons(6, empty))).drop(0).toList )
+    println("cons(4,cons(4,cons(6, empty))).takeWhile( i => i == 4 || i == 5).toList ", cons(4,cons(4,cons(6, empty))).takeWhile( i => i == 4 ).toList )
   }
 }

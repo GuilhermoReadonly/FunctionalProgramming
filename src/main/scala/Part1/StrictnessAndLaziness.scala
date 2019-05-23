@@ -43,7 +43,10 @@ sealed trait Stream[+A]{
   def forAll(p: A => Boolean): Boolean = foldRight(true)((a,b)=> p(a) && b )
 
   //Ex 5.5
-  def takeWhileFoldRight(p: A => Boolean): Stream[A] = foldRight(empty)((h, t) => if(p(h)) Cons(h(),t()) else Empty)
+  def takeWhileFoldRight(p: A => Boolean): Stream[A] = foldRight(empty[A])((h, t) => if(p(h)) cons(h,t) else empty)
+
+  //Ex 5.6
+  def headOption: Option[A] = foldRight(None: Option[A])((h, _) => Some(h) )
 
 }
 case object Empty extends Stream[Nothing]
@@ -70,5 +73,10 @@ object StrictnessAndLaziness  {
     println("cons(4,cons(5,cons(6, empty))).drop(20).toList ", cons(4,cons(5,cons(6, empty))).drop(20).toList )
     println("cons(4,cons(5,cons(6, empty))).drop(0).toList ", cons(4,cons(5,cons(6, empty))).drop(0).toList )
     println("cons(4,cons(4,cons(6, empty))).takeWhile( i => i == 4 || i == 5).toList ", cons(4,cons(4,cons(6, empty))).takeWhile( i => i == 4 ).toList )
+    println("cons(4,cons(4,cons(6, empty))).forAll( i => i == 4 ) ", cons(4,cons(4,cons(6, empty))).forAll( i => i == 4 ) )
+    println("cons(4,cons(4,cons(6, empty))).forAll( i => i%2 == 0 ) ", cons(4,cons(4,cons(6, empty))).forAll( i => i%2 == 0 ) )
+    println("cons(4,cons(4,cons(6, empty))).takeWhileFoldRight( i => i == 4 || i == 5).toList ", cons(4,cons(4,cons(6, empty))).takeWhileFoldRight( i => i == 4 ).toList )
+    println("cons(4,cons(4,cons(6, empty))).headOption() ", cons(4,cons(4,cons(6, empty))).headOption )
+    println("empty.headOption ", empty.headOption )
   }
 }

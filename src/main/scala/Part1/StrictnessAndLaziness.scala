@@ -24,9 +24,23 @@ sealed trait Stream[+A]{
 
   //Ex 5.3
   def takeWhile(p: A => Boolean): Stream[A] = this match{
-    case Empty => Empty
-    case Cons(h,t) => if (p(h())) cons(h(), t().takeWhile(p)) else Empty
+    case Cons(h,t) => if (p(h())) cons(h(), t() takeWhile(p)) else Empty
+    case _ => Empty
   }
+
+  def foldRight[B](z: => B)(f: (A, => B) => B): B =
+    this match {
+      case Cons(h,t) => f(h(), t().foldRight(z)(f))
+      case _ => z
+    }
+
+  //Ex 5.4
+  def forAll_1(p: A => Boolean): Boolean = this match{
+    case Empty => true
+    case Cons(h,t) => p(h()) && t().forAll_1(p)
+  }
+
+  def forAll(p: A => Boolean): Boolean = foldRight(true)((a,b)=> p(a) && b )
 
 }
 case object Empty extends Stream[Nothing]

@@ -54,6 +54,8 @@ sealed trait Stream[+A]{
   def filter(f: A => Boolean): Stream[A] = foldRight(empty[A])((h, t) => if(f(h)) cons(h, t) else t )
   def append[B>:A](s: => Stream[B]): Stream[B] = foldRight(s)((h, t) => cons(h,t) )
 
+
+
 }
 case object Empty extends Stream[Nothing]
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A]
@@ -67,6 +69,28 @@ object Stream {
   def empty[A]: Stream[A] = Empty
   def apply[A](as: A*): Stream[A] =
     if (as.isEmpty) empty else cons(as.head, apply(as.tail: _*))
+
+  //Ex 5.8
+  def constant[A](a: A): Stream[A] = {
+    lazy val infiniteStream: Stream[A] = Stream.cons(a, infiniteStream)
+    infiniteStream
+  }
+
+  //Ex 5.9
+  def from(n: Int): Stream[Int] = cons(n, from(n + 1))
+
+  //Ex 5.10
+  def fibs(): Stream[Int] = {
+    def go(f0: Int, f1: Int): Stream[Int] =
+      cons(f0, go(f1, f0+f1))
+    go(0, 1)
+  }
+
+  //Ex 5.11
+  def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = f(z) match {
+    case None => empty
+    case Some((a, s)) => cons(a, unfold(s)(f))
+  }
 }
 
 object StrictnessAndLaziness  {
@@ -84,5 +108,8 @@ object StrictnessAndLaziness  {
     println("cons(4,cons(4,cons(6, empty))).takeWhileFoldRight( i => i == 4 || i == 5).toList ", cons(4,cons(4,cons(6, empty))).takeWhileFoldRight( i => i == 4 ).toList )
     println("cons(4,cons(4,cons(6, empty))).headOption() ", cons(4,cons(4,cons(6, empty))).headOption )
     println("empty.headOption ", empty.headOption )
+    println("constant(5) take(6) toList ", constant(5) take(6) toList )
+    println("from(5) take(8) toList ", from(5) take(8) toList )
+    println("fibs() take(8) toList ", fibs() take(8) toList )
   }
 }

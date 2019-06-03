@@ -91,6 +91,11 @@ object Stream {
     case None => empty
     case Some((a, s)) => cons(a, unfold(s)(f))
   }
+
+  //Ex 5.12
+  def constant_unfold[A](a: A): Stream[A] = unfold(a)(x => Some((x, x)))
+  def from_unfold(n: Int): Stream[Int] = unfold(n)((x => Some((x, x +1))))
+  def fibs_unfold(): Stream[Int] = unfold((0: Int,1: Int))( t => Some((t._1, (t._2, t._1 + t._2))) )
 }
 
 object StrictnessAndLaziness  {
@@ -111,5 +116,8 @@ object StrictnessAndLaziness  {
     println("constant(5) take(6) toList ", constant(5) take(6) toList )
     println("from(5) take(8) toList ", from(5) take(8) toList )
     println("fibs() take(8) toList ", fibs() take(8) toList )
+    println("constant_unfold(5) take(6) toList ", constant_unfold(5) take(6) toList )
+    println("from_unfold(5) take(8) toList ", from_unfold(5) take(8) toList )
+    println("fibs_unfold() take(8) toList ", fibs_unfold() take(8) toList )
   }
 }

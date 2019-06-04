@@ -54,6 +54,13 @@ sealed trait Stream[+A]{
   def filter(f: A => Boolean): Stream[A] = foldRight(empty[A])((h, t) => if(f(h)) cons(h, t) else t )
   def append[B>:A](s: => Stream[B]): Stream[B] = foldRight(s)((h, t) => cons(h,t) )
 
+  //Ex 5.13
+  def map_unfold[B](f: A => B): Stream[B] = unfold(this)(x =>  x match {
+    case Empty => None
+    case Cons(h, t) => Some((f(h()),t()))
+  })
+
+
 
 
 }
@@ -119,5 +126,6 @@ object StrictnessAndLaziness  {
     println("constant_unfold(5) take(6) toList ", constant_unfold(5) take(6) toList )
     println("from_unfold(5) take(8) toList ", from_unfold(5) take(8) toList )
     println("fibs_unfold() take(8) toList ", fibs_unfold() take(8) toList )
+    println("constant(5) map_unfold(_ + 2) take(8) toList ", constant(5) map_unfold(_ + 2) take(8) toList )
   }
 }
